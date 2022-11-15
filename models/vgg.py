@@ -3,17 +3,10 @@ import torch
 import torch.nn as nn
 from torchinfo import summary
 
-cfg = {
-    'VGG11': [64, 'M', 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'],
-    'VGG13': [64, 64, 'M', 128, 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'],
-    'VGG16': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 'M', 512, 512, 512, 'M', 512, 512, 512, 'M'],
-    'VGG19': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 256, 'M', 512, 512, 512, 512, 'M', 512, 512, 512, 512, 'M'],
-}
-
 class VGG(nn.Module):
-    def __init__(self, vgg_name):
+    def __init__(self, config):
         super(VGG, self).__init__()
-        self.features = self._make_layers(cfg[vgg_name])
+        self.features = self._make_layers(config['LAYER'])
         self.classifier = self._make_head(512,10) #nn.Linear(512, 10)
         self._init_weights()
 
@@ -29,6 +22,7 @@ class VGG(nn.Module):
             elif isinstance(m, nn.Linear):
                 nn.init.normal_(m.weight, 0, 0.01)
                 nn.init.constant_(m.bias, 0)
+                
     def _make_layers(self, cfg):
         layers = []
         in_channels = 3
@@ -64,7 +58,15 @@ class VGG(nn.Module):
         return x
 
 if __name__ == "__main__":
-    model = VGG('VGG13')
+
+    cfg = {
+        'LAYER': [64, 'M', 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'], #VGG11
+        'LAYER': [64, 64, 'M', 128, 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'], #VGG13
+        'LAYER': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 'M', 512, 512, 512, 'M', 512, 512, 512, 'M'], #VGG16
+        'LAYER': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 256, 'M', 512, 512, 512, 512, 'M', 512, 512, 512, 512, 'M'], #VGG19
+    }
+
+    model = VGG(cfg)
     x = torch.randn(2,3,32,32)
     y = model(x)
     summary(model , (2,3,32,32),

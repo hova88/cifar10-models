@@ -1,4 +1,7 @@
 torch>=1.7
 torchvision
 torchinfo
-# wandb
+wandb
+pathlib
+easydict
+yaml
