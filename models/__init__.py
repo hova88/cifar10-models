@@ -22,7 +22,7 @@ __all__ = {
 }
 
 def build_model(model_cfg):
-    model = __all__[model_cfg['NAME']](
+    model = __all__[model_cfg.NAME](
         config=model_cfg,
     )
     
