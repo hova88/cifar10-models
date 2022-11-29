@@ -1,12 +1,11 @@
 '''VGG11/13/16/19 in Pytorch.'''
 import torch
 import torch.nn as nn
-from torchinfo import summary
 
 class VGG(nn.Module):
     def __init__(self, config):
         super(VGG, self).__init__()
-        self.features = self._make_layers(config['LAYER'])
+        self.features = self._make_layers(config.LAYER)
         self.classifier = self._make_head(512,10) #nn.Linear(512, 10)
         self._init_weights()
 
@@ -59,14 +58,16 @@ class VGG(nn.Module):
 
 if __name__ == "__main__":
 
+    from torchinfo import summary
+    from easydict import EasyDict
     cfg = {
-        'LAYER': [64, 'M', 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'], #VGG11
-        'LAYER': [64, 64, 'M', 128, 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'], #VGG13
-        'LAYER': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 'M', 512, 512, 512, 'M', 512, 512, 512, 'M'], #VGG16
+        # 'LAYER': [64, 'M', 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'], #VGG11
+        # 'LAYER': [64, 64, 'M', 128, 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'], #VGG13
+        # 'LAYER': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 'M', 512, 512, 512, 'M', 512, 512, 512, 'M'], #VGG16
         'LAYER': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 256, 'M', 512, 512, 512, 512, 'M', 512, 512, 512, 512, 'M'], #VGG19
     }
-
-    model = VGG(cfg)
+    
+    model = VGG(EasyDict(cfg))
     x = torch.randn(2,3,32,32)
     y = model(x)
     summary(model , (2,3,32,32),
